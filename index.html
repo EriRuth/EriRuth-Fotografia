@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ERICA RUTH - Fotografía Profesional</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Arial', sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background: linear-gradient(135deg, #171717d9 0%, #363636 100%);
+      overflow-x: hidden;
+    }
+    html { scroll-behavior: smooth; }
+
+    .header { position: fixed; top: 0; width: 100%; background: rgba(0,0,0,0.9); backdrop-filter: blur(10px); z-index: 1000; }
+    .nav { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; max-width: 1200px; margin: 0 auto; }
+    .logo { font-size: 1.5rem; font-weight: bold; color: #fff; text-decoration: none; }
+    .logo:hover { color: #7D2C00; }
+    .nav-links { display: flex; list-style: none; gap: 2rem; }
+    .nav-links a { color: #fff; text-decoration: none; padding: 0.5rem 1rem; border-radius: 25px; }
+    .nav-links a:hover { background: rgba(0,0,0,0.2); color: #7D2C00; transform: translateY(-2px); }
+    .hamburger { display: none; flex-direction: column; cursor: pointer; gap: 5px; }
+    .hamburger span { display: block; width: 25px; height: 3px; background: #fff; border-radius: 3px; transition: 0.3s; }
+
+    @media (max-width: 768px) {
+      .nav-links {
+        position: absolute; top: 70px; right: 0;
+        background: rgba(0,0,0,0.95);
+        flex-direction: column; width: 200px; padding: 1rem; gap: 1rem;
+        display: none;
+      }
+      .nav-links.active { display: flex; }
+      .hamburger { display: flex; }
+    }
+
+    .hero { position: relative; height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; color: white; overflow: hidden; padding: 0 1rem; }
+    .hero-content { position: relative; z-index: 2; max-width: 800px; }
+    .hero h1 { font-size: 3.5rem; margin-bottom: 1rem; }
+    .hero p { font-size: 1.3rem; margin-bottom: 2rem; }
+    .cta-btn { display: inline-block; padding: 1rem 2rem; background: linear-gradient(45deg, #404026, #7D2C00); color: white; text-decoration: none; border-radius: 50px; transition: all 0.3s ease; }
+    .cta-btn:hover { transform: translateY(-5px); box-shadow: 0 15px 40px rgba(255, 107, 107, 0.4); }
+
+    .carousel-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; z-index: 0; }
+    .carousel-slide { position: absolute; width: 100%; height: 100%; opacity: 0; transition: opacity 1s ease-in-out; }
+    .carousel-slide.active { opacity: 1; }
+    .carousel-slide img { width: 100%; height: 100%; object-fit: cover; }
+
+    .carousel-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.5); border: none; color: #fff; font-size: 2rem; padding: 0.5rem 1rem; cursor: pointer; z-index: 2; border-radius: 50%; }
+    .carousel-btn:hover { background: rgba(0,0,0,0.8); }
+    .carousel-btn.prev { left: 20px; }
+    .carousel-btn.next { right: 20px; }
+
+    .carousel-dots { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; gap: 10px; z-index: 2; }
+    .carousel-dots span { width: 12px; height: 12px; background: rgba(255,255,255,0.6); border-radius: 50%; cursor: pointer; transition: background 0.3s; }
+    .carousel-dots span.active { background: #7D2C00; }
+
+    .section { padding: 5rem 2rem; max-width: 1200px; margin: 0 auto; }
+    .section h2 { font-size: 2.5rem; text-align: center; margin-bottom: 2rem; color: #fff; position: relative; }
+    .section h2::after { content: ''; position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%); width: 60px; height: 3px; background: linear-gradient(45deg, #F8C99F, #7D2C00); border-radius: 2px; }
+
+    .tabs { display: flex; justify-content: center; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap; }
+    .tabs button { background: transparent; border: 1px solid rgba(255,255,255,0.6); color: #fff; padding: 0.6rem 1.2rem; border-radius: 25px; cursor: pointer; font-size: 1rem; transition: all 0.3s ease; }
+    .tabs button:hover { border-color: #F8C99F; color: #F8C99F; transform: translateY(-3px); }
+    .tabs button.active { background: linear-gradient(45deg, #F8C99F, #7D2C00); color: #fff; border: none; }
+
+    .gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+    .gallery-item { position: relative; border-radius: 15px; overflow: hidden; background: transparent; box-shadow: 0 8px 25px rgba(0,0,0,0.4); cursor: pointer; transition: all 0.3s ease; }
+    .gallery-item img { width: 100%; height: 250px; object-fit: cover; transition: transform 0.3s ease; }
+    .gallery-item:hover img { transform: scale(1.1); }
+    .hidden { display: none; }
+
+    .sobre-mi-container { display: flex; flex-wrap: wrap; align-items: center; gap: 2rem; color: #fff; }
+    .sobre-mi-container img { width: 250px; height: 250px; object-fit: cover; border-radius: 50%; box-shadow: 0 10px 25px rgba(0,0,0,0.4); }
+    .sobre-mi-text { flex: 1; font-size: 1.2rem; line-height: 1.8; }
+
+    #contacto { background: rgba(0,0,0,0.7); border-radius: 15px; }
+    .footer { background: rgba(0,0,0,0.8); color: #fff; text-align: center; padding: 2rem; }
+
+    .lightbox { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; justify-content: center; align-items: center; z-index: 2000; overflow: hidden; }
+    .lightbox.active { display: flex; }
+    .lightbox img { max-width: 90%; max-height: 90%; transition: transform 0.3s ease; cursor: grab; }
+    .lightbox-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.2); border: none; color: #fff; font-size: 2rem; padding: 0.5rem 1rem; cursor: pointer; z-index: 2100; border-radius: 50%; }
+    .lightbox-btn:hover { background: rgba(17, 16, 16, 0.878); }
+    .lightbox-btn.prev { left: 20px; }
+    .lightbox-btn.next { right: 20px; }
+
+    /* 💬 Burbuja WhatsApp */
+    .whatsapp-float {
+      position: fixed;
+      width: 60px;
+      height: 60px;
+      bottom: 25px;
+      right: 25px;
+      background-color: #25D366;
+      color: #FFF;
+      border-radius: 50%;
+      text-align: center;
+      font-size: 30px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      z-index: 3000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .whatsapp-float:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 15px rgba(0,0,0,0.4);
+    }
+    .whatsapp-float img {
+      width: 35px;
+      height: 35px;
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <nav class="nav">
+      <a href="#" class="logo">ERICA RUTH</a>
+      <div class="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></div>
+      <ul class="nav-links">
+        <li><a href="#inicio" onclick="toggleMenu()">Inicio</a></li>
+        <li><a href="#galeria" onclick="toggleMenu()">Galería</a></li>
+        <li><a href="#sobre-mi" onclick="toggleMenu()">Sobre Mí</a></li>
+        <li><a href="#contacto" onclick="toggleMenu()">Contacto</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <section id="inicio" class="hero">
+    <div class="carousel-container">
+      <div class="carousel-slide active"><img src="img/2carrusel.jpg"></div>
+      <div class="carousel-slide"><img src="img/1carrusel.jpg"></div>
+      <div class="carousel-slide"><img src="img/3carrusel.jpg"></div>
+    </div>
+    <button class="carousel-btn prev" onclick="moveSlide(-1)">❮</button>
+    <button class="carousel-btn next" onclick="moveSlide(1)">❯</button>
+    <div class="carousel-dots" id="carousel-dots"></div>
+    <div class="hero-content">
+      <h1>Erica Ruth Fotografía</h1>
+      <p>Fotografía de producto.</p>
+      <a href="#galeria" class="cta-btn">Ver Mi Trabajo</a>
+    </div>
+  </section>
+
+  <section id="galeria" class="section">
+    <h2>Mi Trabajo</h2>
+    <div class="tabs">
+      <button class="active" onclick="showCategory('all', this)">Todo</button>
+      <button onclick="showCategory('bodegon', this)">Bodegon</button>
+      <button onclick="showCategory('bebidas', this)">Bebidas</button>
+      <button onclick="showCategory('alimentos', this)">Alimentos</button>
+    </div>
+    <div class="gallery gallery-main">
+      <div class="gallery-item bebidas"><img src="img/1bebidas.JPG"></div>
+      <div class="gallery-item alimentos"><img src="img/foto2.JPG"></div>
+      <div class="gallery-item bebidas"><img src="img/2bebidas.jpg"></div>
+      <div class="gallery-item bebidas"><img src="img/3bebidas.jpg"></div>
+      <div class="gallery-item alimentos"><img src="img/foto5.jpg"></div>
+      <div class="gallery-item bebidas"><img src="img/4bebidas.jpg"></div>
+      <div class="gallery-item bebidas"><img src="img/5bebidas.jpg"></div>
+      <div class="gallery-item alimentos"><img src="img/foto8.jpg"></div>
+      <div class="gallery-item alimentos"><img src="img/pan integra 2.jpg"></div>
+      <div class="gallery-item bodegon"><img src="img/la picada.jpg"></div>
+      <div class="gallery-item bodegon"><img src="img/PASTAS.jpg"></div>
+      <div class="gallery-item alimentos"><img src="img/merienda.jpg"></div>
+      <div class="gallery-item alimentos"><img src="img/3carrusel.jpg"></div>
+      <div class="gallery-item bodegon"><img src="img/1carrusel.jpg"></div>
+      <div class="gallery-item bebidas"><img src="img/foto3.jpg"></div>
+    </div>
+  </section>
+
+  <section id="sobre-mi" class="section">
+    <h2>Sobre Mí</h2>
+    <div class="sobre-mi-container">
+      <img src="img/madre.jpg" alt="Foto de perfil">
+      <div class="sobre-mi-text">
+        <p>¡Hola! Soy <strong>Erica Ruth</strong>, una apasionada de la fotografía de productos. Mi objetivo es ayudar a marcas y emprendedores a mostrar lo que ofrecen a través de imágenes que transmitan calidad, confianza y estilo.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="contacto" class="section">
+    <h2>Contacto</h2>
+    <div style="max-width:600px; margin:0 auto; text-align:center; color:#fff;">
+      <p><strong>Teléfono:</strong> +54 9 11 3764-7080</p>
+      <p><strong>Email:</strong> ericaruth.foto@gmail.com</p>
+      <p><strong>Instagram:</strong> <a href="https://www.instagram.com/eriruth_fotografia/" target="_blank" style="color:#7D2C00;">@eriruth_fotografia</a></p>
+      <p><strong>Dirección:</strong> Monte Grande. Buenos Aires</p>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p>&copy; 2025 Erica Ruth Fotografía. Todos los derechos reservados.</p>
+  </footer>
+
+  <!-- 💬 Burbuja flotante de WhatsApp -->
+  <a href="#" class="whatsapp-float" target="_blank" id="whatsapp-link">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
+  </a>
+
+  <div class="lightbox" id="lightbox">
+    <button class="lightbox-btn prev" onclick="changeImage(-1)">❮</button>
+    <img id="lightbox-img" src="">
+    <button class="lightbox-btn next" onclick="changeImage(1)">❯</button>
+  </div>
+
+  <script>
+  let currentCategory = "all";
+  function showCategory(category, btn) {
+    currentCategory = category;
+    document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.gallery-main .gallery-item').forEach(item => {
+      if (category === 'all' || item.classList.contains(category)) {
+        item.classList.remove('hidden');
+      } else {
+        item.classList.add('hidden');
+      }
+    });
+  }
+
+  let currentSlide = 0;
+  const slides = document.querySelectorAll(".carousel-slide");
+  const dotsContainer = document.getElementById("carousel-dots");
+  slides.forEach((_, i) => {
+    const dot = document.createElement("span");
+    dot.addEventListener("click", () => showSlide(i));
+    dotsContainer.appendChild(dot);
+  });
+  const dots = dotsContainer.querySelectorAll("span");
+  function showSlide(index) {
+    slides.forEach(s => s.classList.remove("active"));
+    dots.forEach(d => d.classList.remove("active"));
+    slides[index].classList.add("active");
+    dots[index].classList.add("active");
+    currentSlide = index;
+  }
+  function moveSlide(dir) { showSlide((currentSlide + dir + slides.length) % slides.length); }
+  setInterval(() => moveSlide(1), 5000);
+  showSlide(0);
+
+  const allImages = document.querySelectorAll(".gallery-item img");
+  const lightbox = document.getElementById("lightbox");
+  const lightboxImg = document.getElementById("lightbox-img");
+  let visibleImages = [];
+  let currentIndex = 0;
+
+  allImages.forEach(img => img.addEventListener("click", () => {
+    updateVisibleImages();
+    currentIndex = visibleImages.indexOf(img);
+    openLightbox();
+  }));
+
+  function updateVisibleImages() {
+    visibleImages = Array.from(document.querySelectorAll(".gallery-item:not(.hidden) img"));
+  }
+
+  function openLightbox() {
+    lightbox.classList.add("active");
+    lightboxImg.src = visibleImages[currentIndex].src;
+  }
+
+  function closeLightbox() {
+    lightbox.classList.remove("active");
+  }
+
+  function changeImage(dir) {
+    currentIndex = (currentIndex + dir + visibleImages.length) % visibleImages.length;
+    lightboxImg.src = visibleImages[currentIndex].src;
+  }
+
+  lightbox.addEventListener("click", e => { if (e.target === lightbox) closeLightbox(); });
+
+  document.addEventListener("keydown", e => {
+    if (!lightbox.classList.contains("active")) return;
+    if (e.key === "Escape") closeLightbox();
+    if (e.key === "ArrowRight") changeImage(1);
+    if (e.key === "ArrowLeft") changeImage(-1);
+  });
+
+  // 💬 Cambia este enlace por tu link real de WhatsApp
+  document.getElementById("whatsapp-link").href = "https://w.app/eriruthfotografia";
+  </script>
+</body>
+</html>
